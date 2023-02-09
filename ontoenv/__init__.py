@@ -100,6 +100,8 @@ class OntoEnv:
                 self._dependencies.remove_node(uri)
                 logging.info(f"Removed {uri} from mapping")
 
+        self._save()
+
     def _refresh_cache_contents(self):
         self.cache_contents = set()
         for ext in FILE_EXTENSIONS:
@@ -193,7 +195,6 @@ class OntoEnv:
         for row in graph.query(q):
             assert isinstance(row, tuple)
             self.mapping[str(row[0])] = str(filename)
-        self._save()
 
     def _resolve_imports_from_uri(self, uri: OntologyLocation):
         logging.info(f"Resolving imports from {uri}")
