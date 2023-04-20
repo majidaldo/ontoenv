@@ -247,6 +247,7 @@ class OntoEnv:
     def import_dependencies(
         self, graph, cache=None, recursive=True, recursive_limit=-1
     ):
+        graph = graph.skolemize(graph)
         if recursive_limit > 0:
             recursive = False
         elif recursive_limit == 0:
