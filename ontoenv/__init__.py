@@ -247,10 +247,10 @@ class OntoEnv:
     def import_dependencies(
         self, graph, cache=None, recursive=True, recursive_limit=-1
     ):
-        graph = graph.skolemize(graph)
         if recursive_limit > 0:
             recursive = False
         elif recursive_limit == 0:
+            graph = graph.de_skolemize() 
             return
         if cache is None:
             cache = set()
@@ -268,6 +268,8 @@ class OntoEnv:
             logging.info(f"Importing {uri} from {filename}")
             graph.parse(filename, format=rdflib.util.guess_format(filename))
             cache.add(uri)
+        # skolemeize here
+        graph = graph.skolemize(graph) # https://github.com/gtfierro/ontoenv/issues/13 TODO
         if (recursive or recursive_limit > 0) and new_imports:
             self.import_dependencies(
                 graph,
@@ -275,9 +277,9 @@ class OntoEnv:
                 recursive=recursive,
                 recursive_limit=recursive_limit - 1,
             )
-
-
-
+        else:
+            # inverse at exit?
+            graph = graph.de_skolemize() # ??
 
 
 def find_root_file(start=None) -> Optional[Path]:
